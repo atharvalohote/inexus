@@ -1,0 +1,43 @@
+name: safex2
+description: A mobile-first responsive web app for IoT device management.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0' # Updated SDK constraint for broader compatibility. Your ^3.7.2 is within this range.
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # ALL THESE DEPENDENCIES ARE ESSENTIAL FOR IMETER APP FUNCTIONALITY
+  provider: ^6.1.2             # For state management (DeviceProvider)
+  go_router: ^14.0.0           # For declarative routing
+  shared_preferences: ^2.2.3   # For local storage (recent IPs, theme preference)
+  file_picker: ^8.0.0+1        # For picking firmware files (.bin)
+  encrypt: ^5.0.3              # For AES encryption
+  flutter_spinkit: ^5.2.1      # For loading animations/spinners
+  fluttertoast: ^8.2.5         # For showing success/error toast messages
+  http: ^1.2.1                 # <<-- ADDED THIS DEPENDENCY FOR REAL NETWORK REQUESTS -->>
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.0 # Keeping a common recent version, your ^5.0.0 is also fine.
+
+flutter:
+  uses-material-design: true
+
+  # Fonts section is commented out as you requested not to use custom fonts.
+  # If you change your mind, uncomment this section and add the font files.
+  # fonts:
+  #   - family: Inter
+  #     fonts:
+  #       - asset: assets/fonts/Inter-Regular.ttf
+  #       - asset: assets/fonts/Inter-Bold.ttf
+  #         weight: 700
