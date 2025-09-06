@@ -32,12 +32,16 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  # Fonts section is commented out as you requested not to use custom fonts.
-  # If you change your mind, uncomment this section and add the font files.
-  # fonts:
-  #   - family: Inter
-  #     fonts:
-  #       - asset: assets/fonts/Inter-Regular.ttf
-  #       - asset: assets/fonts/Inter-Bold.ttf
-  #         weight: 700
+  assets:
+    - assets/fonts/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
+    - family: SpaceMono
+      fonts:
+        - asset: assets/fonts/SpaceMono-Regular.ttf
+        - asset: assets/fonts/SpaceMono-Bold.ttf
+          weight: 700

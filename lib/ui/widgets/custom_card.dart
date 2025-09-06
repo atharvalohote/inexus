@@ -17,41 +17,77 @@ class CustomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
-      elevation: 4, // Shadow depth for the card
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // Rounded corners
-      margin: const EdgeInsets.all(8.0), // Margin around the card
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: theme.colorScheme.primary, width: 1.2),
+      ),
+      color: theme.cardTheme.color,
+      margin: const EdgeInsets.all(8.0),
       child: Padding(
-        padding: const EdgeInsets.all(20.0), // Padding inside the card
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // Align content to the start (left)
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                if (icon != null) ...[ // Conditionally display icon if provided
-                  Icon(icon, size: 24, color: Theme.of(context).primaryColor), // Icon with primary color
-                  const SizedBox(width: 10), // Spacing between icon and title
+                if (icon != null) ...[
+                  Icon(
+                    _getMinimalIcon(icon),
+                    size: 24,
+                    color: theme.colorScheme.primary,
+                    semanticLabel: title,
+                  ),
+                  const SizedBox(width: 10),
                 ],
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.bodyLarge?.color, // Title text style
+                    color: theme.colorScheme.primary,
+                    fontFamily: theme.textTheme.bodyLarge?.fontFamily,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12.0), // Spacing between title and content
+            const SizedBox(height: 12.0),
             Text(
               content,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: contentColor ?? Theme.of(context).textTheme.titleLarge?.color, // Content text style, with optional custom color
-                fontSize: 28, // Larger font size for content
+              style: theme.textTheme.displaySmall?.copyWith(
+                color: contentColor ?? theme.colorScheme.primary,
+                fontFamily: 'SpaceMono',
+                fontWeight: FontWeight.bold,
+                fontSize: 28,
+                letterSpacing: 1.1,
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  // Map filled icons to minimal/outlined/rounded icons
+  IconData _getMinimalIcon(IconData? icon) {
+    switch (icon) {
+      case Icons.check_circle:
+        return Icons.check_circle_outline;
+      case Icons.cancel:
+        return Icons.cancel_outlined;
+      case Icons.wifi:
+        return Icons.wifi_outlined;
+      case Icons.developer_mode:
+        return Icons.code;
+      case Icons.cloud_upload:
+        return Icons.cloud_upload_outlined;
+      case Icons.lock:
+        return Icons.lock_outline;
+      case Icons.security:
+        return Icons.shield_outlined;
+      default:
+        return icon ?? Icons.circle_outlined;
+    }
   }
 }

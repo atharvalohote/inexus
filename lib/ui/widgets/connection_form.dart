@@ -34,113 +34,134 @@ class _ConnectionFormState extends State<ConnectionForm> {
 
   @override
   Widget build(BuildContext context) {
-    // Access DeviceProvider for state management (loading, recent IPs, connection logic).
+    final theme = Theme.of(context);
     final deviceProvider = Provider.of<DeviceProvider>(context);
     return Card(
-      elevation: 6, // Shadow depth for the card
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // Rounded corners
-      margin: const EdgeInsets.all(8.0), // Margin around the card
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: theme.colorScheme.primary, width: 1.2),
+      ),
+      color: theme.cardTheme.color,
+      margin: const EdgeInsets.all(8.0),
       child: Padding(
-        padding: const EdgeInsets.all(24.0), // Padding inside the card
+        padding: const EdgeInsets.all(24.0),
         child: Form(
-          key: _formKey, // Assign form key for validation
+          key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch children horizontally
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
                 'Connect to NodeMCU',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                  fontFamily: theme.textTheme.bodyLarge?.fontFamily,
+                  letterSpacing: 1.1,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24.0),
-              // IP Address input field
               TextFormField(
                 controller: _ipController,
                 decoration: InputDecoration(
                   labelText: 'NodeMCU IP Address',
                   hintText: 'e.g., 192.168.1.100',
-                  prefixIcon: const Icon(Icons.router), // Icon for IP input
-                  labelStyle: Theme.of(context).inputDecorationTheme.labelStyle, // Apply theme style
+                  prefixIcon: Icon(Icons.lan_outlined, color: theme.colorScheme.primary, size: 24, semanticLabel: 'IP Address'),
+                  labelStyle: theme.inputDecorationTheme.labelStyle,
+                  hintStyle: theme.inputDecorationTheme.hintStyle,
                 ),
-                keyboardType: TextInputType.url, // Suggests URL keyboard for IP
-                validator: Validators.validateIpAddress, // Use validator utility
+                style: theme.textTheme.bodyLarge?.copyWith(fontFamily: 'SpaceMono'),
+                keyboardType: TextInputType.url,
+                validator: Validators.validateIpAddress,
+                autofillHints: const [AutofillHints.url],
               ),
               const SizedBox(height: 16.0),
-              // Port input field
               TextFormField(
                 controller: _portController,
                 decoration: InputDecoration(
                   labelText: 'Port (e.g., 80)',
                   hintText: 'e.g., 80',
-                  prefixIcon: const Icon(Icons.settings_input_antenna), // Icon for port input
-                  labelStyle: Theme.of(context).inputDecorationTheme.labelStyle, // Apply theme style
+                  prefixIcon: Icon(Icons.input_outlined, color: theme.colorScheme.primary, size: 24, semanticLabel: 'Port'),
+                  labelStyle: theme.inputDecorationTheme.labelStyle,
+                  hintStyle: theme.inputDecorationTheme.hintStyle,
                 ),
-                keyboardType: TextInputType.number, // Suggests number keyboard for port
-                validator: Validators.validatePort, // Use validator utility
+                style: theme.textTheme.bodyLarge?.copyWith(fontFamily: 'SpaceMono'),
+                keyboardType: TextInputType.number,
+                validator: Validators.validatePort,
+                // autofillHints: const [AutofillHints.port], // Removed invalid hint
               ),
               const SizedBox(height: 32.0),
-              // Connect button
               ElevatedButton.icon(
-                onPressed: deviceProvider.isLoading // Disable button while loading
+                onPressed: deviceProvider.isLoading
                     ? null
                     : () async {
-                  if (_formKey.currentState!.validate()) { // Validate form fields
-                    _formKey.currentState!.save(); // Save form state
-                    await deviceProvider.connectAndGetInfo( // Call connection method
-                        _ipController.text,
-                        int.parse(_portController.text)); // Port is parsed here
-                  }
-                },
-                icon: deviceProvider.isLoading // Show loading spinner if connecting
-                    ? const SpinKitThreeBounce(
-                  color: Colors.white,
-                  size: 20.0,
-                )
-                    : const Icon(Icons.cast_connected), // Connection icon
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          await deviceProvider.connectAndGetInfo(
+                              _ipController.text,
+                              int.parse(_portController.text));
+                        }
+                      },
+                icon: deviceProvider.isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                      )
+                    : Icon(Icons.play_arrow_rounded, color: theme.colorScheme.primary, size: 24, semanticLabel: 'Connect'),
                 label: Text(
                   deviceProvider.isLoading ? 'Connecting...' : 'Connect',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onPrimary,
+                  ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  elevation: 5,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  elevation: 2,
                 ),
               ),
               const SizedBox(height: 24.0),
-              // Display recent IPs (optional feature)
               Consumer<DeviceProvider>(
                 builder: (context, provider, child) {
                   if (provider.recentIps.isEmpty) {
-                    return const SizedBox.shrink(); // Hide if no recent IPs
+                    return const SizedBox.shrink();
                   }
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Recent Connections:',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                          fontFamily: theme.textTheme.bodyLarge?.fontFamily,
+                        ),
                       ),
                       const SizedBox(height: 10),
                       Wrap(
-                        spacing: 8.0, // Horizontal spacing between chips
-                        runSpacing: 8.0, // Vertical spacing between rows of chips
+                        spacing: 8.0,
+                        runSpacing: 8.0,
                         children: provider.recentIps.map((ip) {
                           return ActionChip(
-                            label: Text(ip),
+                            label: Text(ip, style: theme.textTheme.bodyMedium),
                             onPressed: () {
-                              // Populate IP and Port fields when a recent IP is tapped.
                               List<String> parts = ip.split(':');
                               _ipController.text = parts[0];
-                              _portController.text = parts.length > 1 ? parts[1] : '80'; // Default port if not stored
+                              _portController.text = parts.length > 1 ? parts[1] : '80';
                             },
-                            backgroundColor: Theme.of(context).cardColor,
+                            backgroundColor: theme.cardTheme.color,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
-                              side: BorderSide(color: Theme.of(context).dividerColor),
+                              side: BorderSide(color: theme.colorScheme.primary),
                             ),
-                            labelStyle: Theme.of(context).textTheme.bodyMedium,
+                            labelStyle: theme.textTheme.bodyMedium,
                           );
                         }).toList(),
                       ),

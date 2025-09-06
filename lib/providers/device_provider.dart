@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart'; // Ensure 'fluttertoast' in pub
 // FIX: Corrected package name from 'imeter_app' to 'safex' for all internal imports
 import 'package:safex2/models/device_info.dart'; // Import the DeviceInfo model
 import 'package:safex2/services/device_api.dart'; // Import the DeviceApi service
-import 'package:safex2/utils/encryption_util.dart'; // Import the EncryptionUtil utility
+// import 'package:safex2/utils/encryption_util.dart';
 
 class DeviceProvider with ChangeNotifier {
   // Private state variables
@@ -123,7 +123,7 @@ class DeviceProvider with ChangeNotifier {
 
     if (result != null && result.files.single.bytes != null) {
       _isUploadingFirmware = true;
-      _firmwareUploadStatus = 'Encrypting and uploading firmware...';
+      _firmwareUploadStatus = 'Uploading firmware...';
       _firmwareValidityStatus = null;
       notifyListeners();
 
@@ -131,25 +131,20 @@ class DeviceProvider with ChangeNotifier {
         final firmwareBytes = result.files.single.bytes!;
         final fileName = result.files.single.name;
 
-        // 1. Encrypt the firmware file using the EncryptionUtil.
-        final encryptedBytes = EncryptionUtil.encryptBytes(firmwareBytes);
-
-        // 2. Upload the encrypted firmware to the connected device.
+        // Upload the raw firmware to the connected device (no client-side encryption).
         if (_deviceInfo == null || !_deviceInfo!.isOnline) {
           throw Exception('No device connected or device is offline. Cannot upload firmware.');
         }
         final success = await _deviceApi.uploadFirmware(
           _deviceInfo!.ipAddress.split(':')[0], // Extract IP from "IP:Port" string
           int.parse(_deviceInfo!.ipAddress.split(':')[1]), // Extract port
-          encryptedBytes,
+          firmwareBytes,
           fileName,
         );
 
         if (success) {
           _firmwareUploadStatus = 'Firmware uploaded successfully!';
-          // In a real scenario, the NodeMCU would return a detailed validation status
-          // (e.g., hash match, secure boot flag). Here, we simulate it.
-          _firmwareValidityStatus = 'Firmware is valid and secure (simulated)';
+          _firmwareValidityStatus = null;
           Fluttertoast.showToast(
               msg: 'Firmware upload successful!',
               toastLength: Toast.LENGTH_SHORT,
